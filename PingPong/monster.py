@@ -144,6 +144,7 @@ class PlayerKeyListener(QObject):
         print("Player moved to", new_x)
 
 
-# Initialize the game and key listener.
-game = NukeGame2()
-key_listener = PlayerKeyListener(game)
+def start_nuke_game():
+    global game, key_listener
+    game = NukeGame2()
+    key_listener = PlayerKeyListener(game)
