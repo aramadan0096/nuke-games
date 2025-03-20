@@ -30,9 +30,11 @@ class NukeGame(QObject):
             bdheight=380,
             xpos=50,
             ypos=50,
-            label='Game Area'
+            label='<img src="E:/Scripts/nuke-games/Images/h.jpg" width="795">'
         )
 
+        nuke.zoom(1, [400, 300])
+        
         # Create the player plate (a NoOp node) positioned near the bottom.
         self.player_plate = nuke.nodes.NoOp(name="player plate")
         self.player_plate['xpos'].setValue(200)

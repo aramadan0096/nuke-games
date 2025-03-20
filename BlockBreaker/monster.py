@@ -9,7 +9,7 @@ PLAYER_WIDTH = 100
 PLAYER_HEIGHT = 20
 
 good_dot_color = 4294967295  # White
-bad_dot_color = 255  # black
+bad_dot_color = 4278190335  # black
 class NukeGame2(QObject):
     def __init__(self):
         super(NukeGame2, self).__init__()
@@ -25,18 +25,18 @@ class NukeGame2(QObject):
     def setup_game(self):
         """Creates the game environment."""
         self.backdrop = nuke.nodes.BackdropNode(
-            bdwidth=400,
-            bdheight=800,
+            bdwidth=407,
+            bdheight=793,
             xpos=50,
             ypos=50,
-            label="Collected: 0"
+            label='<h1>Collected:  <font color="green"><b>0</b></font></h1>\n<img src="E:/Scripts/nuke-games/Images/v.jpg" width="400">'
         )
-
-        self.player_plate = nuke.nodes.NoOp(name="player plate")
+        nuke.zoom(1, [300, 400])
+        self.player_plate = nuke.nodes.NoOp(name="Collector")
         self.player_plate['xpos'].setValue(150)
         self.player_plate['ypos'].setValue(750)
 
-        self.monster = nuke.nodes.NoOp(name="monster")
+        self.monster = nuke.nodes.NoOp(name="Dropper")
         self.monster['xpos'].setValue(175)
         self.monster['ypos'].setValue(100)
 
@@ -78,7 +78,7 @@ class NukeGame2(QObject):
                 
                 if dot_color == good_dot_color:  # White Dot (Good)
                     self.collected_count += 1
-                    self.backdrop['label'].setValue(f"Collected: {self.collected_count}")
+                    self.backdrop['label'].setValue(f'<h1>Collected: <font color="green"><b>{self.collected_count}</b></font></h1>\n<img src="E:/Scripts/nuke-games/Images/v.jpg" width="400">')
                 elif dot_color == bad_dot_color:  # Red Dot (Bad)
                     self.end_game("You hit a bad dot!")
 
