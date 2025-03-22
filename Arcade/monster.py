@@ -29,14 +29,14 @@ class NukeGame2(QObject):
             bdheight=793,
             xpos=50,
             ypos=50,
-            label='<h1>Collected:  <font color="green"><b>0</b></font></h1>\n<img src="E:/Scripts/nuke-games/Images/v.jpg" width="400">'
+            label='<h1>Collected:  <font color="green"><b>0</b></font></h1>\n<img src="verticalBG.jpg" width="400">'
         )
         nuke.zoom(1, [300, 400])
-        self.player_plate = nuke.nodes.NoOp(name="Collector")
+        self.player_plate = nuke.nodes.NoOp(name="Collector", hide_input=True)
         self.player_plate['xpos'].setValue(150)
         self.player_plate['ypos'].setValue(750)
 
-        self.monster = nuke.nodes.NoOp(name="Dropper")
+        self.monster = nuke.nodes.NoOp(name="Dropper", hide_input=True)
         self.monster['xpos'].setValue(175)
         self.monster['ypos'].setValue(100)
 
@@ -78,7 +78,7 @@ class NukeGame2(QObject):
                 
                 if dot_color == good_dot_color:  # White Dot (Good)
                     self.collected_count += 1
-                    self.backdrop['label'].setValue(f'<h1>Collected: <font color="green"><b>{self.collected_count}</b></font></h1>\n<img src="E:/Scripts/nuke-games/Images/v.jpg" width="400">')
+                    self.backdrop['label'].setValue(f'<h1>Collected: <font color="green"><b>{self.collected_count}</b></font></h1>\n<img src="verticalBG.jpg" width="400">')
                 elif dot_color == bad_dot_color:  # Red Dot (Bad)
                     self.end_game("You hit a bad dot!")
 
@@ -106,7 +106,7 @@ class NukeGame2(QObject):
 
     def drop_dot(self):
         """Drops a dot with an 80% chance of being white and 20% chance of being red."""
-        dot = nuke.nodes.Dot(name="dot")
+        dot = nuke.nodes.Dot(name="dot", hide_input=True)
         dot['xpos'].setValue(self.monster['xpos'].value())
         dot['ypos'].setValue(self.monster['ypos'].value())
 

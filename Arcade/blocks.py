@@ -30,13 +30,13 @@ class NukeGame(QObject):
             bdheight=380,
             xpos=50,
             ypos=50,
-            label='<img src="E:/Scripts/nuke-games/Images/h.jpg" width="795">'
+            label=r'<img src="horizontalBG.jpg" width="795">'
         )
 
         nuke.zoom(1, [400, 300])
         
         # Create the player plate (a NoOp node) positioned near the bottom.
-        self.player_plate = nuke.nodes.NoOp(name="player plate")
+        self.player_plate = nuke.nodes.NoOp(name="player plate", hide_input=True)
         self.player_plate['xpos'].setValue(200)
         self.player_plate['ypos'].setValue(350)  # Placed inside the 400 height area
 
@@ -46,7 +46,7 @@ class NukeGame(QObject):
         block_start_y = 100
         for row in range(3):
             for col in range(8):
-                block = nuke.nodes.NoOp(name=f"block_{row}_{col}")
+                block = nuke.nodes.NoOp(name=f"block_{row}_{col}", hide_input = True)
                 xpos = block_start_x + col * (BLOCK_WIDTH + 10)
                 ypos = block_start_y + row * (BLOCK_HEIGHT + 10)
                 block['xpos'].setValue(xpos)
@@ -57,7 +57,7 @@ class NukeGame(QObject):
                 self.blocks.append(block)
 
         # Create the ball as a Dot node
-        self.ball = nuke.nodes.Dot(name="ball")
+        self.ball = nuke.nodes.Dot(name="ball", hide_input=True)
         self.ball['xpos'].setValue(250)
         self.ball['ypos'].setValue(330)  # Starting just above the player plate
 
