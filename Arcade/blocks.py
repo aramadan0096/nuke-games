@@ -123,7 +123,7 @@ class NukeGame(QObject):
         for block in blocks_to_remove:
             self.blocks.remove(block)
             nuke.delete(block)
-            print("Block hit and removed:", block.name())
+            # print("Block hit and removed:", block.name())
 
         # Check if all blocks have been removed: win condition!
         if not self.blocks:
@@ -164,7 +164,7 @@ class PlayerKeyListener(QObject):
         current_x = self.game.player_plate['xpos'].value()
         new_x = current_x + delta
         self.game.player_plate['xpos'].setValue(new_x)
-        print("Player moved to", new_x)
+        # print("Player moved to", new_x)
 
 def start_nuke_game():
     global game, key_listener
