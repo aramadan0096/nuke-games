@@ -53,6 +53,6 @@ Jump from platform to platform and climb as high as you can! Avoid falling off t
 - **Copyright**: [rawpixel](https://www.freepik.com/author/rawpixel-com).
 
 ## Exclamation
-- Since the Nuke node graph is not designed for this kind of game, please keep it away from your computer.
+- Since the Nuke node graph is not designed for this kind of game, please keep it away from your Comping.
 
 Enjoy your break and happy Comping! 🎉
