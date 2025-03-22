@@ -2,6 +2,7 @@ import nuke
 
 import blocks
 import monster
+
 # Create a custom menu named "AR"
 menu = nuke.menu('Nuke')
 ar_menu = menu.addMenu('AR')

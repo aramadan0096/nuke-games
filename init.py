@@ -1,3 +1,4 @@
 import nuke
 
-nuke.pluginAddPath('./BlockBreaker')
+nuke.pluginAddPath('./Arcade')
+nuke.pluginAddPath('./Arcade/Images')
