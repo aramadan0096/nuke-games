@@ -1,3 +1,8 @@
+#####################################
+# Author: Ahmed Ramadan
+# Pray for Palestine 
+#####################################
+
 import nuke
 import random
 from PySide2.QtCore import QTimer, Qt, QObject
