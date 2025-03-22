@@ -18,7 +18,7 @@ PLATFORM_HEIGHT = 10
 # Backdrop dimensions and position
 BACKDROP_X = 50
 BACKDROP_Y = 50
-BACKDROP_WIDTH = 400
+BACKDROP_WIDTH = 409
 BACKDROP_HEIGHT = 800
 
 # Vertical spacing between platforms
@@ -27,6 +27,9 @@ PLATFORM_SPACING = 150
 # Falling speed parameters
 BASE_FALL_SPEED = 5       # Base falling speed for platforms (pixels per update)
 FALL_SPEED_INCREMENT = 1  # How much the fall speed increases with each jump
+
+# Ground parameters
+GROUND_DOT_SPACING = 10  # Horizontal spacing between ground dots
 
 class IcyTowerGame(QObject):
     def __init__(self):
@@ -48,18 +51,26 @@ class IcyTowerGame(QObject):
         self.game_timer.start(50)
 
     def setup_game(self):
-        """Sets up the game scene: the backdrop, the player and initial nodes."""
+        """Sets up the game scene: the backdrop, the player, initial platforms, and the ground dots."""
         self.backdrop = nuke.nodes.BackdropNode(
             bdwidth=BACKDROP_WIDTH,
             bdheight=BACKDROP_HEIGHT,
             xpos=BACKDROP_X,
             ypos=BACKDROP_Y,
-            label=f'<h1>Score: {self.score}</h1>'
+            label=f'<h1>Score: <font color="green"><b>{self.score}</b></font></h1>\n<img src="verticalBG.jpg" width="400">'
         )
-        self.player = nuke.nodes.Axis(name="Player")
+        self.player = nuke.nodes.Axis(name="Player", hide_input=True, tile_color=536805631)
         self.player['xpos'].setValue(BACKDROP_X + (BACKDROP_WIDTH - PLAYER_WIDTH) / 2)
         self.player['ypos'].setValue(self.safe_line)
         self.platforms = []
+        # Create ground dots under the player to mimic the ground
+        self.ground = []
+        ground_y = self.safe_line + PLAYER_HEIGHT  # Position ground just below the player
+        for x in range(BACKDROP_X, BACKDROP_X + BACKDROP_WIDTH, GROUND_DOT_SPACING):
+            dot = nuke.nodes.Dot(name="Ground", hide_input=True)
+            dot['xpos'].setValue(x)
+            dot['ypos'].setValue(ground_y)
+            self.ground.append(dot)
 
     def generate_initial_platforms(self):
         """Generate a series of platforms from the bottom of the backdrop upward."""
@@ -70,7 +81,7 @@ class IcyTowerGame(QObject):
             y -= PLATFORM_SPACING
 
     def create_platform(self, y):
-        """Creates a platform (a NoOp node) at a given y coordinate with random x position."""
+        """Creates a platform (a NoOp node) at a given y coordinate with a random x position."""
         x_min = BACKDROP_X
         x_max = BACKDROP_X + BACKDROP_WIDTH - PLATFORM_WIDTH
         x = random.randint(int(x_min), int(x_max))
@@ -81,7 +92,7 @@ class IcyTowerGame(QObject):
         return platform
 
     def update_game(self):
-        """Main game loop: update physics, check for collisions, manage falling and generate new platforms."""
+        """Main game loop: update physics, check for collisions, manage falling, ground deletion, and generate new platforms."""
         # Apply gravity to the player's vertical velocity
         self.player_velocity_y = getattr(self, 'player_velocity_y', 0) + GRAVITY
 
@@ -107,7 +118,7 @@ class IcyTowerGame(QObject):
                         # Reset falling speed upon landing
                         self.current_fall_speed = self.base_fall_speed
                         self.score = max(self.score, int((BACKDROP_Y + BACKDROP_HEIGHT) - plat_y))
-                        self.backdrop['label'].setValue(f'<h1>Score: {self.score}</h1>')
+                        self.backdrop['label'].setValue(f'<h1>Score: <font color="green"><b>{self.score}</b></font></h1>\n<img src="verticalBG.jpg" width="400">')
                         break
                     else:
                         self.player_on_platform = False
@@ -118,14 +129,11 @@ class IcyTowerGame(QObject):
                 self.player['ypos'].setValue(self.safe_line)
                 self.player_velocity_y = 0
         else:
-            # After three landings, let platforms fall with an incrementing speed
+            # Once safe mode is over, start falling:
             for platform in self.platforms:
                 platform['ypos'].setValue(platform['ypos'].value() + self.current_fall_speed)
             if self.player_on_platform:
                 self.player['ypos'].setValue(self.player['ypos'].value() + self.current_fall_speed)
-            if self.player['ypos'].value() > BACKDROP_Y + BACKDROP_HEIGHT:
-                self.end_game("Game Over! You fell off the tower.")
-
             # Delete platforms that have fallen below the backdrop
             remaining_platforms = []
             for platform in self.platforms:
@@ -135,11 +143,21 @@ class IcyTowerGame(QObject):
                     remaining_platforms.append(platform)
             self.platforms = remaining_platforms
 
+            # Delete the ground dots once falling begins
+            if self.ground:
+                for dot in self.ground:
+                    nuke.delete(dot)
+                self.ground = []
+
             # Generate new platforms at the top if needed
             highest_platform_y = min([p['ypos'].value() for p in self.platforms]) if self.platforms else BACKDROP_Y
             while highest_platform_y > BACKDROP_Y:
                 new_platform = self.create_platform(highest_platform_y - PLATFORM_SPACING)
                 highest_platform_y = new_platform['ypos'].value()
+
+            # Check for game over: if the player falls below the backdrop
+            if self.player['ypos'].value() > BACKDROP_Y + BACKDROP_HEIGHT:
+                self.end_game("Game Over! You fell off the tower.")
 
         # If the player climbs above a threshold, shift the scene downward (simulate upward movement)
         threshold = BACKDROP_Y + BACKDROP_HEIGHT / 3
@@ -149,8 +167,7 @@ class IcyTowerGame(QObject):
             for platform in self.platforms:
                 platform['ypos'].setValue(platform['ypos'].value() + delta)
             self.score += int(delta)
-            self.backdrop['label'].setValue(f'<h1>Score: {self.score}</h1>')
-            # Generate new platforms at the top if needed
+            self.backdrop['label'].setValue(f'<h1>Score: <font color="green"><b>{self.score}</b></font></h1>\n<img src="verticalBG.jpg" width="400">')
             highest_platform_y = min([p['ypos'].value() for p in self.platforms]) if self.platforms else BACKDROP_Y
             while highest_platform_y > BACKDROP_Y:
                 new_platform = self.create_platform(highest_platform_y - PLATFORM_SPACING)
@@ -216,4 +233,5 @@ def start_icy_tower_game():
     # Optionally, adjust the Nuke viewer or zoom as needed
     nuke.zoom(1, [BACKDROP_X + BACKDROP_WIDTH/2, BACKDROP_Y + BACKDROP_HEIGHT/2])
 
-start_icy_tower_game()
+# Uncomment the following line to run the game:
+# start_icy_tower_game()
