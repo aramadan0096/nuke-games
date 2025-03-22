@@ -20,7 +20,7 @@ Jump from platform to platform and climb as high as you can! Avoid falling off t
     git clone https://github.com/aramadan0096/nuke-games.git
     ```
 - Alternatively download the repo as a zip file 
-2. **Move the contents** of the `GIZMOS` folder to your `/user/.nuke` directory.
+2. **Move the contents** of the `SCRIPTS` folder to your `/user/.nuke` directory.
 
 3. **Edit your `init.py`** file in `/user/.nuke` to include the following lines:
     ```python
